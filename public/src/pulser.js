@@ -94,6 +94,8 @@ var Pulser = function() {
 
     }
 
+    var timeToRecalculateWhichBandIsMostInteresting = 64; // constantly switching bands can make animation seem flustered
+    var countdownToRecalculateWhichBandIsMostInteresting = timeToRecalculateWhichBandIsMostInteresting;
     var idxMostInterestingBand = 0; // tracks which band is the most interesting
     var bands = [];                 // set up bands between the frequency cutpoints
     for (i in bandCutPoints) {
@@ -122,16 +124,23 @@ var Pulser = function() {
             bands[bandIdx].accumulate(parseFloat(eqData[i]));
         }
 
-        // recalculate which band is the most interesting
-        idxMostInterestingBand = 0;
-        var maxInterestingness = 0;
-        var interestingness = null;
+        // refresh the bands' internal state
         for (i in bands) {
             bands[i].refresh();
-            interestingness = bands[i].getInterestingness(); 
-            if (interestingness > maxInterestingness) {
-                idxMostInterestingBand = i;
-                maxInterestingness = interestingness;
+        }
+
+        // periodically recalculate which band is the most interesting
+        if (countdownToRecalculateWhichBandIsMostInteresting-- == 0) {
+            countdownToRecalculateWhichBandIsMostInteresting = timeToRecalculateWhichBandIsMostInteresting;
+            idxMostInterestingBand = 0;
+            var maxInterestingness = 0;
+            var interestingness = null;
+            for (i in bands) {
+                interestingness = bands[i].getInterestingness();
+                if (interestingness > maxInterestingness) {
+                    idxMostInterestingBand = i;
+                    maxInterestingness = interestingness;
+                }
             }
         }
 

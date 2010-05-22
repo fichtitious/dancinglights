@@ -1,0 +1,63 @@
+        html, body {
+            text-align: center;
+            margin:0;
+            padding:0;
+            background: #000000; 
+            color: #666666;     
+        } 
+
+        #lightsContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1px;
+            height: 1px;
+            overflow: visible;
+        }        
+        
+        #canvasContainer { 
+            position: absolute;
+            width: 1000px;
+            height: 560px;
+            top: -280px;
+            left: -500px;
+        }
+            
+        canvas { 
+            border: 1px solid #333333; 
+        }
+        
+        a {
+            color: #00CBCB;
+            text-decoration:none;
+            font-weight:bold;
+        }
+        a:hover {
+            color:#FFFFFF;
+        }
+        
+        #output {
+            font-family: Verdana; 
+            font-size: 0.6em;
+            margin-top:2px;
+        }
+
+        .toggle {
+            position: fixed;
+            bottom: 0px;
+            width: 1.2em;
+            height: 1.2em;
+            margin: 2px;
+            border: 1px solid #999;
+            cursor: pointer;
+            background: #fff;
+            color: #333;
+        }
+
+        .left {
+            left: 0px;
+        }
+
+        .right {
+            right: 0px;
+        }

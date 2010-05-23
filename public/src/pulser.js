@@ -51,14 +51,14 @@ var Pulser = function() {
 
             // mean squares of recent energies
             var averageLocalEnergy = 0.0;
-            for (i in self.energyHistory) {
+            for (var i = 0; i < energyHistoryLength; i++) {
                 averageLocalEnergy += Math.pow(self.energyHistory[i], 2);
             }
             averageLocalEnergy /= energyHistoryLength;
 
             // mean squared differences of recent energies from local average
             var energyVariance = 0.0;
-            for (i in self.energyHistory) {
+            for (var i = 0; i < energyHistoryLength; i++) {
                 energyVariance += Math.pow(averageLocalEnergy - self.energyHistory[i], 2);
             }
             energyVariance /= energyHistoryLength;
@@ -70,7 +70,7 @@ var Pulser = function() {
             self.beatHistory.shift();
             self.beatHistory.push(beat);
             self.numRecentBeats = 0;
-            for (i in self.beatHistory) {
+            for (var i = 0; i < beatHistoryLength; i++) {
                 self.numRecentBeats += self.beatHistory[i];
             }
 
@@ -96,7 +96,8 @@ var Pulser = function() {
 
     var idxMostInterestingBand = 0; // tracks which band is the most interesting
     var bands = [];                 // set up bands between the frequency cutpoints
-    for (i in bandCutPoints) {
+    var numBands = bandCutPoints.length;
+    for (var i = 0; i < numBands; i++) {
         bands[i] = new Band();
     }
 
@@ -106,7 +107,7 @@ var Pulser = function() {
         idxMostInterestingBand = 0;
         var maxInterestingness = 0;
         var interestingness = null;
-        for (i in bands) {
+        for (var i = 0; i < numBands; i++) {
             interestingness = bands[i].getInterestingness();
             if (interestingness > maxInterestingness) {
                 idxMostInterestingBand = i;
@@ -124,7 +125,7 @@ var Pulser = function() {
     // called by music player to push in new sound energies
     this.refresh = function(eqData) {
 
-        for (i in bands) {
+        for (var i = 0; i < numBands; i++) {
             bands[i].pushLastEnergyIntoHistoryAndZeroCurrent();
         }
 
@@ -139,7 +140,7 @@ var Pulser = function() {
         }
 
         // refresh the bands' internal state
-        for (i in bands) {
+        for (var i = 0; i < numBands; i++) {
             bands[i].refresh();
         }
 

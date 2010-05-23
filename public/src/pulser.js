@@ -82,9 +82,9 @@ var Pulser = function() {
         }
 
         // how interesting is this band?  not interesting at all if there were no recent beats.
-        // otherwise, the fewer recent beats, the more interesting.
+        // otherwise, favor bands with a medium number of recent beats.
         self.getInterestingness = function() {
-            return self.numRecentBeats == 0 ? 0 : beatHistoryLength - self.numRecentBeats;
+            return self.numRecentBeats == 0 ? 0 : (beatHistoryLength - Math.abs(maxRecentBeats/2 - self.numRecentBeats));
         }
 
         // called by pulser.pulse() if this band is the most interesting
@@ -94,7 +94,7 @@ var Pulser = function() {
 
     }
 
-    var timeToRecalculateWhichBandIsMostInteresting = 64; // constantly switching bands can make animation seem flustered
+    var timeToRecalculateWhichBandIsMostInteresting = 32; // constantly switching bands can make animation seem flustered
     var countdownToRecalculateWhichBandIsMostInteresting = timeToRecalculateWhichBandIsMostInteresting;
     var idxMostInterestingBand = 0; // tracks which band is the most interesting
     var bands = [];                 // set up bands between the frequency cutpoints

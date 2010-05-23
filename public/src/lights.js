@@ -78,11 +78,11 @@ var Lights = function (pulser) {
             self.isHovering = false;
         });
 
-        setInterval(self.update, 33);
+        setInterval(update, 33);
 
     }
 
-    self.update = function() {
+    var update = function() {
 
         var ctx      = self.ctx;
         var canvasW  = self.canvasW;

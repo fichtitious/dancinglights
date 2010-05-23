@@ -1,0 +1,19 @@
+This is an interactive music visualizer.  lights.js draws an HTML5 canvas, fills it with colorful lights, and makes them responsive to mouse interactions.  player.js plays your song in a hidden flash movie and makes streaming equalizer data available with soundmanager2.  pulser.js does beat detection on that data and tells the lights animation when to simulate small clicks on the canvas, making the lights dance in rhythm.
+
+Setup
+
+Drop mp3s or symlinks into public/music/.  Either serve public/ and symlinked mp3s, or, to open lights.html in a browser without serving it, go here and add a flash security exemption for public/: http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04a.html.
+
+Options
+
+Please opt to use Chrome.  Bottom left button: toggle the dancing.  Bottom right button: toggle the music.  URL arguments:
+
+  s = mp3 filename
+  n = number of lights (default: a few hundred)
+  h = size of the sound energy history buffer in the beat detector (default: 32, which is pretty big, requires some cpu)
+  d = debug the beat detector by revealing the currently most interesting frequency band (default: nah)
+  dp = debug soundmanager2 (default: nope)
+
+Uses
+
+jquery, soundmanager2, liquid particles by dan puhe (http://spielzeugz.de/html5/liquid-particles.html).

@@ -8,11 +8,11 @@ Options
 
 Please opt to use Chrome.  Bottom left button: toggle the dancing.  Bottom right button: toggle the music.  URL arguments:
 
-  s = mp3 filename
-  n = number of lights (default: a few hundred)
-  h = size of the sound energy history buffer in the beat detector (default: 32, which is pretty big, requires some cpu)
-  d = debug the beat detector by revealing the currently most interesting frequency band (default: nah)
-  dp = debug soundmanager2 (default: nope)
+* s = mp3 filename
+* n = number of lights (default: a few hundred)
+* h = size of the sound energy history buffer in the beat detector (default: 32, which is pretty big, requires some cpu)
+* d = debug the beat detector by revealing the currently most interesting frequency band (default: nah)
+* dp = debug soundmanager2 (default: nope)
 
 Uses
 

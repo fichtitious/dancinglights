@@ -1,5 +1,5 @@
 /*
-    beat-detector: music player continuously calls pulser.refresh(), passing in 
+    beat detector: music player continuously calls pulser.refresh(), passing in
     fresh equalizer values, and animation continuously calls pulser.pulse() to 
     check whether animation should move.
 */
@@ -10,14 +10,12 @@ var Pulser = function() {
                                                                // (middle frequencies generally the most interesting)
     var energyHistoryLength = getRequestArg("h", 32); // can tune down to save cpu
 
-    // a frequency band between two cutpoints.
-    // beats: beats detected in the music.
-    // pulses: beats the animation should dance to.
+    // a frequency band between two cutpoints
     var Band = function() {
 
         var self = this;
 
-        self.pulseNow = false; // the time-to-pulse state variable
+        self.beatNow = false; // the beat detection state variable
 
         // keep track of current and recent sound energies in this frequency band
         self.currentEnergy = 0.0;
@@ -26,24 +24,15 @@ var Pulser = function() {
             self.energyHistory[i] = 0.0;
         }
 
-        // called by pulser.refresh() to shift this band's energy history
-        self.pushLastEnergyIntoHistoryAndZeroCurrent = function() {
-            self.energyHistory.shift();
-            self.energyHistory.push(self.currentEnergy);
-            self.currentEnergy = 0.0;
-        }
-
         // called by pulser.refresh() to push in the energy at one frequency in this band
         self.accumulate = function(energy) {
             self.currentEnergy += energy;
         }
 
-        var beatHistoryLength = 16; // how many recent beats and non-beats (1's and 0's) to remember
-        var maxRecentBeats = 8;     // how many 1's in that window means take a break from pulsing
-        self.numRecentBeats = 0;    // holds onto sum of values in beatHistory
+        var beatHistoryLength = 16; // how many recent beats and non-beats to remember
         self.beatHistory = [];      // holds onto recent beats (1's and 0's)
         for (var i = 0; i < beatHistoryLength; i++) {
-            self.beatHistory[i] = 0;
+            self.beatHistory[i] = false;
         }
 
         // called by pulser.refresh()
@@ -64,32 +53,32 @@ var Pulser = function() {
             energyVariance /= energyHistoryLength;
 
             // a beat is detected if the current energy exceeds blah blah
-            var beat = (self.currentEnergy > averageLocalEnergy * (-0.0025714 * energyVariance + 1.5142857)) ? 1 : 0;
+            self.beatNow = self.currentEnergy > averageLocalEnergy * (-0.0025714 * energyVariance + 1.5142857);
 
             // push this beat into history
             self.beatHistory.shift();
-            self.beatHistory.push(beat);
-            self.numRecentBeats = 0;
-            for (var i = 0; i < beatHistoryLength; i++) {
-                self.numRecentBeats += self.beatHistory[i];
-            }
+            self.beatHistory.push(self.beatNow);
 
-            // don't want to be constantly pulsing if song gets noisy.
-            // pulse only if there's a current beat and the buffer isn't
-            // too full of recent beats.
-            self.pulseNow = beat ? self.numRecentBeats <= maxRecentBeats : false;
+            // push current energy into history
+            self.energyHistory.shift();
+            self.energyHistory.push(self.currentEnergy);
+            self.currentEnergy = 0.0;
 
         }
 
         // how interesting is this band?  not interesting at all if there were no recent beats.
         // otherwise, favor bands with a medium number of recent beats.
         self.getInterestingness = function() {
-            return self.numRecentBeats == 0 ? 0 : (beatHistoryLength - Math.abs(maxRecentBeats/2 - self.numRecentBeats));
+            var numRecentBeats = 0;
+            for (var i = 0; i < beatHistoryLength; i++) {
+                numRecentBeats += self.beatHistory[i] ? 1 : 0;
+            }
+            return numRecentBeats == 0 ? 0 : (beatHistoryLength - Math.abs(beatHistoryLength / 2 - numRecentBeats));
         }
 
         // called by pulser.pulse() if this band is the most interesting
-        self.pulse = function() {
-            return self.pulseNow;
+        self.beat = function() {
+            return self.beatNow;
         }
 
     }
@@ -102,7 +91,7 @@ var Pulser = function() {
     }
 
     // periodically recalculate which band is the most interesting
-    // (constantly switching bands can make animation seem flustered).
+    // (constantly switching bands can make animation seem flustered)
     setInterval(function() {
         idxMostInterestingBand = 0;
         var maxInterestingness = 0;
@@ -115,19 +104,40 @@ var Pulser = function() {
             }
         }
         debug(idxMostInterestingBand);
-    }, 1000);
+    }, 5000);
 
-    // called by animation: was there a beat worth pulsing to?
+
+    var pulseHistoryLength = 16; // don't want to be constantly pulsing if song gets noisy,
+    var maxRecentPulses = 12;    // so maintain a buffer for pulse() to check against
+    var pulseHistory = [];
+    for (var i = 0; i < pulseHistoryLength; i++) {
+        pulseHistory[i] = false;
+    }
+
+    // called by animation, says whether there's a beat worth pulsing to
     this.pulse = function() {
-        return bands[idxMostInterestingBand].pulse();
+
+        var beat = bands[idxMostInterestingBand].beat(); // check whether there's a beat in the most interesting band
+        var pulse = null;
+
+        if (beat) {
+            numRecentPulses = 0;                           // count up the recent pulses and pulse
+            for (var i = 0; i < pulseHistoryLength; i++) { // if there haven't been too many
+                numRecentPulses += pulseHistory[i] ? 1 : 0;
+            }
+            pulse = numRecentPulses <= maxRecentPulses;
+        } else {
+            pulse = false;
+        }
+
+        pulseHistory.shift();
+        pulseHistory.push(pulse);
+        return pulse;
+
     }
 
     // called by music player to push in new sound energies
     this.refresh = function(eqData) {
-
-        for (var i = 0; i < numBands; i++) {
-            bands[i].pushLastEnergyIntoHistoryAndZeroCurrent();
-        }
 
         // push new sound energies into each band, summing over the energies
         var bandIdx = 0;     // at all the frequencies belonging to the band

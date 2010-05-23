@@ -1,5 +1,5 @@
 $(function() {
-    $("body").append("<div id='debug' align='left'/>");
+    $("body").append("<div id='debug' align='left' style='font-size:300%';/>");
 });
 
 var _debugMode = getRequestArg("d", false);

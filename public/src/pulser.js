@@ -104,7 +104,7 @@ var Pulser = function() {
             }
         }
         debug(idxMostInterestingBand);
-    }, 5000);
+    }, 1000);
 
 
     var pulseHistoryLength = 16; // don't want to be constantly pulsing if song gets noisy,
@@ -132,7 +132,13 @@ var Pulser = function() {
 
         pulseHistory.shift();
         pulseHistory.push(pulse);
-        return pulse;
+        return pulse || pulseHistory[pulseHistoryLength - 1] // smooths the animation a lot
+                     || pulseHistory[pulseHistoryLength - 2]
+                     || pulseHistory[pulseHistoryLength - 3]
+                     || pulseHistory[pulseHistoryLength - 4]
+                     || pulseHistory[pulseHistoryLength - 5]
+                     || pulseHistory[pulseHistoryLength - 6]
+                     || pulseHistory[pulseHistoryLength - 7];
 
     }
 

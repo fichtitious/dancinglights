@@ -6,7 +6,7 @@ var Lights = function (pulser) {
 
     var self = this;
 
-    var numLights = getRequestArg("n", 550);
+    var numLights = getRequestArg("n", 1300);
 
     self.go = function() {
 

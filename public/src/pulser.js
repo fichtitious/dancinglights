@@ -30,7 +30,7 @@ var Pulser = function() {
         }
 
         var beatHistoryLength = 16; // how many recent beats and non-beats to remember
-        self.beatHistory = [];      // holds onto recent beats (1's and 0's)
+        self.beatHistory = [];      // holds onto recent beats
         for (var i = 0; i < beatHistoryLength; i++) {
             self.beatHistory[i] = false;
         }
@@ -67,7 +67,7 @@ var Pulser = function() {
         }
 
         // how interesting is this band?  not interesting at all if there were no recent beats.
-        // otherwise, favor bands with a medium number of recent beats.
+        // favor bands with a medium number of recent beats.
         self.getInterestingness = function() {
             var numRecentBeats = 0;
             for (var i = 0; i < beatHistoryLength; i++) {

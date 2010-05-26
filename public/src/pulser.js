@@ -132,7 +132,7 @@ var Pulser = function() {
 
         pulseHistory.shift();
         pulseHistory.push(pulse);
-        return pulse || pulseHistory[pulseHistoryLength - 1] // smooths the animation a lot
+        return pulse || pulseHistory[pulseHistoryLength - 1] // smoothes the animation a lot
                      || pulseHistory[pulseHistoryLength - 2]
                      || pulseHistory[pulseHistoryLength - 3]
                      || pulseHistory[pulseHistoryLength - 4]

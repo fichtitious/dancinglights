@@ -27,8 +27,8 @@ var Lights = function (pulser) {
         $("#lightsContainer").append("<div id='canvasContainer'/>");
         $("#canvasContainer").append("<canvas id='mainCanvas' width='" + self.canvasW + "' height='" + self.canvasH + "'></canvas>")
         $("#canvasContainer").append("<div id='output'/>");
-        $("body").append("<div id='toggleMusic' class='toggle right'>-</div>");
-        $("body").append("<div id='toggleAutoPulse' class='toggle left'>-</div>");
+        $("body").append("<div id='toggleMusic' class='toggle' style='right:0px'>-</div>");
+        $("body").append("<div id='toggleAutoPulse' class='toggle' style='left:0px'>-</div>");
 
         self.outerDiv = $("#lightsContainer").get(0);
         self.canvasDiv = $("#canvasContainer").get(0);
